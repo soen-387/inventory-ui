@@ -8,7 +8,11 @@
     <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="assets/fonts/ionicons.min.css">
     <link rel="stylesheet" href="assets/css/Login-Form-Clean.css">
-    <link rel="stylesheet" href="assets/css/styles.css">
+	<link rel="stylesheet" href="assets/bootstrap-select/css/bootstrap-select.min.css">
+	<script src="assets/js/jquery.min.js"></script>
+	<script src="assets/js/inventory.js"></script>
+    <script src="assets/bootstrap/js/bootstrap.min.js"></script>
+	<script src="assets/bootstrap-select/js/bootstrap-select.min.js"></script>
 </head>
 
 <body>
@@ -25,9 +29,54 @@
             </div>
         </div>
     </nav>
-    <div class="container"></div>
-    <script src="assets/js/jquery.min.js"></script>
-    <script src="assets/bootstrap/js/bootstrap.min.js"></script>
+    <div class="container">
+		<div class="row">
+			<div class="panel panel-default">
+				<div class="panel-body">
+					<form>
+						<div class="form-group">
+							<label for="name">Name:</label>
+							<input type="text" class="form-control" id="name" name="name">
+						</div>
+						<br>
+						<div class="form-group">
+							<label for="type">Type:</label>
+							<select class="selectpicker form-control" id="type" name="type">
+								<option>Conference Room</option>
+								<option>Projector</option>
+								<option>Whiteboard</option>
+								<option>Computer</option>
+							</select>
+						</div>
+						<br>
+						<div class="form-group">
+						<label for="status">Status:</label>
+							<select class="selectpicker form-control" id="status" name="status">
+								<option>Available</option>
+								<option>Unavailable</option>
+							</select>
+						</div>
+						<input type="hidden" name="id" id="id" value="0">
+						<br>
+						<button type="button" class="btn btn-default" id="saveResource">Save</button>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
 </body>
 
 </html>
+<script>
+$( document ).ready(function() {
+	loadEdit();
+	
+	$("#deleteResource").click(function() {
+		deleteResource();
+	});
+	
+	$("#saveResource").click(function() {
+		saveResource();
+	});
+});
+</script>
