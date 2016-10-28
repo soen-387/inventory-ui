@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="assets/fonts/ionicons.min.css">
     <link rel="stylesheet" href="assets/css/Login-Form-Clean.css">
-    <link rel="stylesheet" href="assets/css/styles.css">
+    <link rel="stylesheet" href="assets/css/view.css">
 </head>
 
 <body>
@@ -25,7 +25,37 @@
             </div>
         </div>
     </nav>
-    <div class="container"></div>
+    <div class="container">
+        <div class="details">
+            <h1>View Resource</h1>
+            <h5>Resource Name</h5>
+            <h3>Main Hall</h3>
+            <label class="usage">In Use</label>
+            <h5>Resource Type</h5>
+            <h3>Conference Room</h3>
+            <form class="floatLeft" action="editResource.html" method="get">
+                <input type="submit" class="btn" value="Edit"/>
+            </form>
+            <button class="btn">Delete</button>
+        </div>
+        <div class="items">
+            <table class="bordered">
+                <thead>
+                    <tr class="tblHeader">
+                        <th>Items</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Whiteboard</td>
+                    </tr>
+                    <tr>
+                        <td>Panel content</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
     <script src="assets/js/jquery.min.js"></script>
     <script src="assets/bootstrap/js/bootstrap.min.js"></script>
 </body>
