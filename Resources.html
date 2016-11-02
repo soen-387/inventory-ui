@@ -8,6 +8,8 @@
     <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
 	<link rel="stylesheet" href="assets/bootstrap-table/css/bootstrap-table.min.css">
     <link rel="stylesheet" href="assets/fonts/ionicons.min.css">
+    <link rel="stylesheet" href="assets/css/custom-search-input.css">
+
 	<script src="assets/js/jquery.min.js"></script>
 	<script src="assets/js/inventory.js"></script>
     <script src="assets/bootstrap/js/bootstrap.min.js"></script>
@@ -31,6 +33,20 @@
     <div class="container">
         <h1>Resources </h1>
         <form>
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div id="custom-search-input">
+                            <div class="input-group col-md-12">
+                                <input type="text" class="form-control" placeholder="Search..." />
+                                <span class="input-group-btn">
+                                    <button class="btn btn-default" type="button">Go!</button>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
             <div class="dropdown">
                 <button class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false" type="button">Change Status<span class="caret"></span></button>
                 <ul class="dropdown-menu" role="menu">
@@ -65,5 +81,18 @@ $(function () {
     $('#table').bootstrapTable({
         data: getData()
     });
+});
+
+$('#table').DataTable({
+    "fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
+        switch(aData[0]){
+            case 'Unavailable':
+                $(nRow).css('color', 'red')
+                break;
+            case 'Available':
+                $(nRow).css('color', 'green')
+                break;
+        }
+    }
 });
 </script>
