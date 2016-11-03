@@ -132,6 +132,57 @@ function getData() {
 	];
 }
 
+$(document).ready(function(){
+    $("#table").DataTable({
+        data: getData(),
+        columns: [
+            { 
+                title: "ID", 
+                data: "id" 
+            },
+            { 
+                title: "Name", 
+                data: "name" 
+            },
+            { 
+                title: "Type", 
+                data: "type" 
+            },
+            { 
+                title: "Status", 
+                data: "status",
+                createdCell: function(td, cellData, rowData, row, col) {
+                    if(cellData == "Available"){
+                        $(td).css('background-color', "#dff0d8");
+                    }
+                    else if(cellData == "Unavailable"){
+                        $(td).css('background-color', "#f2dede");
+                    }
+                }
+            },
+            { 
+                title: "Actions", 
+                data: "id",
+                render: function(data){
+                            return "<div class='col-xs-12'>" + "<a class='col-xs-3 btn btn-primary' href='View.html?id="+ data +"'>View</a>"
+                                 + "<a class='col-xs-3 btn btn-warning' style='margin-right: 15px; margin-left: 15px;' href='editResource.html?id="+ data +"'>Edit</a>" 
+                                 + "<a class='col-xs-3 btn btn-danger' href=''>Delete</a>"
+                                 + "</div>";
+                } 
+            },
+            { 
+                title: "Other", 
+                data: "id",
+                render: function(data){
+                            return "<div class='checkbox'><label><input type='checkbox' value='"+ data +"'>Quick Edit</label></div>";
+                }  
+            }
+        ]
+    });
+
+    $(".table").css("border-color", "black");
+});
+
 function getInventoryItem(id) {
 	var data = getData();
 	for (var i = 0; i < data.length; i++) {
