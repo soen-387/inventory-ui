@@ -1,12 +1,3 @@
-function actionFormatter(value, row) {
-    return '<a href="View.html?id=' + row.id +'">View </a><a href="Form.html?id=' + row.id + '">Edit </a><a href="#">Delete </a>';
-}
-
-function deleteResource() {
-    var id = $('#id').val();
-	window.location.href = "Resources.html";
-}
-
 function getData() {
 	return [
     {
@@ -132,8 +123,30 @@ function getData() {
 	];
 }
 
+function getTypes() {
+    return [
+        {
+            id: "Computer",
+            text: "Computer"
+        },
+        {
+            id: "Conference Room",
+            text: "Conference Room"
+        },
+
+        {
+            id: "Projector",
+            text: "Projector"
+        },
+        {
+            id: "Whiteboard",
+            text: "Whiteboard"
+        }
+    ];
+}
+
 $(document).ready(function(){
-    $("#table").DataTable({
+    var table = $("#table").DataTable({
         data: getData(),
         columns: [
             { 
@@ -163,24 +176,126 @@ $(document).ready(function(){
             { 
                 title: "Actions", 
                 data: "id",
-                render: function(data){
-                            return "<div class='col-xs-12'>" + "<a class='col-xs-3 btn btn-primary' href='View.html?id="+ data +"'>View</a>"
-                                 + "<a class='col-xs-3 btn btn-warning' style='margin-right: 15px; margin-left: 15px;' href='editResource.html?id="+ data +"'>Edit</a>" 
-                                 + "<a class='col-xs-3 btn btn-danger' href=''>Delete</a>"
+                render: function(data, type, full, meta){
+                            return "<div class='col-sm-12 btn-group'>" 
+                                 + "<button type='button' class='view col-sm-4 btn btn-primary' data-toggle='modal' data-target='#viewModal'>View</button>"
+                                 + "<button type='button' class='edit col-sm-4 btn btn-warning' data-toggle='modal' data-target='#editModal'>Edit</button>"
+                                 + "<button type='button' class='delete col-sm-4 btn btn-danger'>Delete</button>"
                                  + "</div>";
                 } 
             },
             { 
-                title: "Other", 
+                title: "Quick Edit", 
                 data: "id",
                 render: function(data){
                             return "<div class='checkbox'><label><input type='checkbox' value='"+ data +"'>Quick Edit</label></div>";
                 }  
             }
-        ]
+        ]        
+    });
+
+    $("#createType").select2({ 
+        data: getTypes(),
+        width: "100%"
+    });
+
+     $("#createStatus").select2({ 
+        width: "100%",
+        minimumResultsForSearch: Infinity
+     });
+
+    //  $("createType").select2({ 
+    //     width: "100%",
+    //     allowClear: true
+    //  });
+
+    //  $("#createStatus").select2({ 
+    //     width: "100%",
+    //     minimumResultsForSearch: Infinity
+    //  });
+
+    var editType = $("#editType").select2({ 
+        data: getTypes(),
+        width: "100%"
+    });
+
+    var editStatus = $("#editStatus").select2({ 
+        width: "100%",
+        minimumResultsForSearch: Infinity
+     });
+
+     $("#items-multiple").select2({ 
+        width: "100%",  
+        allowClear: true
     });
 
     $(".table").css("border-color", "black");
+
+    $("#table").on("click", ".delete",(function() {
+        var row = table.row($(this).parents('tr'));
+        var dialog = confirm("Are you sure you want to delete this record?");
+        if (dialog == true) {
+            table.row(row).remove().draw();
+        } 
+    }));
+
+    $("#table").on("click", ".view",(function() {
+        var row = table.row($(this).parents('tr')).data();
+
+        $("#viewName").attr("value", row.name);
+        $("#viewType").attr("value", row.type);
+
+        if(row.status == "Available") {
+            $("#available").show();
+            $("#unavailable").hide();
+        } else {
+            $("#available").hide();
+            $("#unavailable").show();
+        }
+
+        if(row.type == "Conference Room") {
+            $("#items").show();
+        } else {
+            $("#items").hide();
+        }
+    }));
+
+    $("#table").on("click", ".edit",(function() {
+        var row = table.row($(this).parents('tr')).data();
+
+        $("#editName").attr("value", row.name);
+
+        editType.val(row.type).trigger("change");
+
+        if(row.status == "Available") {
+            editStatus.val("available").trigger("change");
+        } else {
+             editStatus.val("unavailable").trigger("change");
+        }
+
+        if(row.type == "Conference Room") {
+            $("#editStatusGroup").show();
+        } else {
+            $("#editStatusGroup").hide();
+        }
+    }));
+
+    $('#createRecord').on('click', function () {
+        table.row.add({
+            "id": "0",
+            "name": $("#createName").val(),
+            "type": $("#createType").val(),
+            "status": $("#createStatus").val()
+            }).draw();
+
+        $("#createType").select2("val", "Computer");
+        $("#createStatus").select2("val", "Available");
+        $("#createName").val("");
+        $("#createModal").modal("hide");
+    } );
+
+    $(".multi-delete").click(function() {
+    });
 });
 
 function getInventoryItem(id) {
@@ -206,39 +321,4 @@ function getUrlParameter(sParam) {
             return sParameterName[1] === undefined ? true : sParameterName[1];
         }
     }
-}
-
-function loadEdit() {
-	var edit = false;
-	var id = getUrlParameter('id');
-	if(typeof id !== 'undefined') {
-		var item = getInventoryItem(id);
-		if (item != null) {
-			edit = true;
-			 $('#name').val(item.name)
-			 $('#type').val(item.type)
-			 $('#status').val(item.status)
-			 $('#id').val(item.id)
-			 $("#saveResource").after(' <button type="button" class="btn btn-danger" id="deleteResource">Delete</button>');
-			 $(".panel-body form").before('<h2>Edit Resource</h2>');
-		}
-	}
-	
-	if(!edit) {
-		$(".panel-body form").before('<h2>Create Resource</h2>');
-	}
-}
-
-function quickEditFormatter(row) {
-    return '<span><label class="checkbox-inline"><input type="checkbox">Quick Edit</label></span>';
-}
-
-function saveResource() {
-    var resource = {
-		id: $('#id').val(),
-		name: $('#name').val(),
-		type: $('#type').val(),
-		status: $('#status').val()
-	};
-	window.location.href = "Resources.html";
 }

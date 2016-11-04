@@ -13,25 +13,49 @@
 	<!--<link rel="stylesheet" href="assets/bootstrap-table/css/bootstrap-table.min.css">-->
     <!--<link rel="stylesheet" href="assets/fonts/ionicons.min.css">-->
     <!--<link rel="stylesheet" href="assets/css/custom-search-input.css">-->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select2.min.css" rel="stylesheet" />
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 	<script src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
-	<script src="assets/js/inventory.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.full.min.js"></script>
+    	<script src="assets/js/inventory.js"></script>
     <!--<script src="assets/js/jquery.min.js"></script>-->
     <!--<script src="assets/bootstrap/js/bootstrap.min.js"></script>-->
 	<!--<script src="assets/bootstrap-table/js/bootstrap-table.min.js"></script>-->
 
     <style>
-        .section{
+        .section {
             padding-bottom: 15px;
+        };
+
+        .inline {
+            display: inline-block;
+        };
+
+        .form-group {
+            padding-bottom: 15px;
+        }
+
+        #resource-name, #resource-type {
+            font-weight: bold;
+        }
+
+        #items {
+            margin-bottom: 0px;
+            margin-top: 25px;
+        }
+        
+        #createStatus {
+            margin-bottom: 15px;
+            margin-top: 20px;
         }
     </style>
 </head>
 <body>
     <nav class="navbar navbar-default">
         <div class="container-fluid">
-            <div class="navbar-header"><a class="navbar-brand navbar-link" href="#">Inventory </a>
+            <div class="navbar-header"><a class="navbar-brand navbar-link" href="#">Inventory</a>
                 <button class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navcol-1"><span class="sr-only">Toggle navigation</span><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button>
             </div>
             <div class="collapse navbar-collapse" id="navcol-1">
@@ -43,22 +67,23 @@
         </div>
     </nav>
     <div class="container">
-        <section id="title" class="section">
+        <section id="title" class="section" style="margin-bottom: 30px;">
             <div class="row">
-                <div class="col-xs-12">
-                    <div class="pull-left">
-                        <h1>Resources</h1>
-                    </div>
-                    <div class="pull-right" style="margin-top: 25px; margin-bottom: 5px;">
-                        <a href="Form.html" class="btn btn-default">Create Resource</a>
-                        <div class="btn-group">
-                            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            Change Status <span class="caret"></span>
-                            </button>
-                            <ul class="dropdown-menu">
-                                <li><a href="#">Available</a></li>
-                                <li><a href="#">Unavailable</a></li>
-                            </ul>
+                <div class="inline">
+                    <div class="col-xs-12">
+                        <div class="pull-left">
+                            <h1>Resources</h1>
+                        </div>
+                        <div class="btn-group pull-right" role="group" style="margin-top: 25px; margin-bottom: 5px;">
+                            <button type="button" class="btn btn-success" data-toggle="modal" data-target="#createModal">Create Resource</button>
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Change Status <span class="caret"></span></button>
+                                <ul class="dropdown-menu">
+                                    <li><a href="#">Available</a></li>
+                                    <li><a href="#">Unavailable</a></li>
+                                </ul>
+                            </div>
+                            <button type="button" class="btn btn-danger">Delete Resource(s)</button>
                         </div>
                     </div>
                 </div>
@@ -74,6 +99,135 @@
             </div>
         </section>
     </div>
+    <section id="create-modal" class="section">
+        <!-- Modal -->
+        <div class="modal fade" id="createModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="myModalLabel">Create Resource</h4>
+                    </div>
+                    <div class="modal-body">
+                        <form id="createForm">
+                            <div class="form-group">
+                                <label for="name">Name:</label>
+                                <input type="text" class="form-control" id="createName" name="name">
+                            </div>
+                            <div class="form-group">
+                                <label for="type">Type:</label>
+                                <select id="createType" class="form-control"></select>
+                            </div>
+                            <div class="form-group">
+                            <label for="status">Status:</label>
+                                <select id="createStatus" class="form-control">
+                                    <option>Available</option>
+                                    <option>Unavailable</option>
+                                </select>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                        <button id="createRecord" type="button" class="btn btn-success">Create Resource</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section id="view-modal" class="section">
+        <!-- Modal -->
+        <div class="modal fade" id="viewModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="myModalLabel">View Resource</h4>
+                    </div>
+                    <div class="modal-body">
+                        <form>
+                            <div class="form-group">
+                                <label for="viewName" class="control-label">Name:</label>
+                                <input type="text" class="form-control" id="viewName" value="Main Hall" disabled>
+                            </div>
+                            <div class="form-group">
+                                <label for="viewType" class="control-label">Type:</label>
+                                <input type="text" class="form-control" id="viewType" value="Conference Room" disabled>
+                            </div>
+                            <div id="createStatus" class="form-group">
+                                <label>Availability:</label>
+                                <h4 id="available"><span class="label label-success">Available</span></h4>
+                                <h4 id="unavailable"><span class="label label-danger">Unavailable</span></h4>
+                            </div>
+                            <div id="items" class="panel panel-primary">
+                                <div class="panel-heading">
+                                    <h3 class="panel-title">Included Items</h3>
+                                </div>
+                                <ul class="list-group">
+                                        <li class="list-group-item">
+                                            Whiteboard
+                                        </li>
+                                        <li class="list-group-item">
+                                            Monitor
+                                        </li>
+                                        <li class="list-group-item">
+                                            Computer
+                                        </li>
+                                    </ul>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section id="edit-modal" class="section">
+        <!-- Modal -->
+        <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="myModalLabel">Edit Resource</h4>
+                    </div>
+                    <div class="modal-body">
+                        <form>
+                            <div class="form-group">
+                                <label for="editName" class="control-label">Name:</label>
+                                <input type="text" class="form-control" id="editName" value="Main Hall">
+                            </div>
+                            <div class="form-group">
+                                <label for="editType" class="control-label">Type:</label>
+                                <select id="editType" class="form-control"></select>
+                            </div>
+                            <div id="availability" class="form-group">
+                                <label class="control-label">Availability:</label>
+                                <select class="form-control" id="editStatus">
+                                    <option value="available">Available</option>
+                                    <option value="unavailable">Unavailable</option>
+                                </select>
+                            </div>
+                            <div id="editStatusGroup" class="form-group">
+                                <label class="control-label">Included Items:</label>
+                                <select id="items-multiple" multiple="multiple">
+                                    <option value="whiteboard">Whiteboard</option>
+                                    <option value="monitor">Monitor</option>
+                                    <option value="computer">Computer</option>
+                                </select>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-success">Save Resource</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 </body>
 </html>
 <script>
