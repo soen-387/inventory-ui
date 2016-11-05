@@ -76,7 +76,7 @@
                         </div>
                         <div class="btn-group pull-right" role="group" style="margin-top: 25px; margin-bottom: 5px;">
                             <button type="button" class="btn btn-success" data-toggle="modal" data-target="#createModal">Create Resource</button>
-                            <div class="btn-group">
+                            <div id="quickEditStatus" class="btn-group">
                                 <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Change Status <span class="caret"></span></button>
                                 <ul class="dropdown-menu">
                                     <li><a href="#">Available</a></li>
@@ -101,7 +101,7 @@
     </div>
     <section id="create-modal" class="section">
         <!-- Modal -->
-        <div class="modal fade" id="createModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal fade" id="createModal" role="dialog" aria-labelledby="myModalLabel">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -109,20 +109,25 @@
                         <h4 class="modal-title" id="myModalLabel">Create Resource</h4>
                     </div>
                     <div class="modal-body">
+                        <div id="createAlert" class="modal-alert alert alert-danger alert-dismissible hidden" role="alert">
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                            <strong>Error!</strong> Please fill in the input(s) in red!
+                        </div>
                         <form id="createForm">
                             <div class="form-group">
-                                <label for="name">Name:</label>
-                                <input type="text" class="form-control" id="createName" name="name">
+                                <label class="control-label" for="createName">Name:</label>
+                                <input type="text" class="form-control" id="createName">
+                                <span id="createNameIcon" class="glyphicon glyphicon-remove form-control-feedback hidden" aria-hidden="true"></span>
                             </div>
                             <div class="form-group">
-                                <label for="type">Type:</label>
+                                <label class="control-label" for="createType">Type:</label>
                                 <select id="createType" class="form-control"></select>
                             </div>
-                            <div class="form-group">
-                            <label for="status">Status:</label>
+                            <div class="form-group" has-success>
+                            <label class="control-label" for="createStatus">Status:</label>
                                 <select id="createStatus" class="form-control">
-                                    <option>Available</option>
-                                    <option>Unavailable</option>
+                                    <option value="Available">Available</option>
+                                    <option value="Unavailable">Unavailable</option>
                                 </select>
                             </div>
                         </form>
@@ -146,6 +151,10 @@
                     </div>
                     <div class="modal-body">
                         <form>
+                            <div class="form-group">
+                                <label for="viewID" class="control-label">ID:</label>
+                                <input type="text" class="form-control" id="viewID" disabled>
+                            </div>
                             <div class="form-group">
                                 <label for="viewName" class="control-label">Name:</label>
                                 <input type="text" class="form-control" id="viewName" value="Main Hall" disabled>
@@ -194,10 +203,19 @@
                         <h4 class="modal-title" id="myModalLabel">Edit Resource</h4>
                     </div>
                     <div class="modal-body">
-                        <form>
+                        <div id="editAlert" class="modal-alert alert alert-danger alert-dismissible hidden" role="alert">
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                            <strong>Error!</strong> Please fill in the input(s) in red!
+                        </div>
+                        <form id="editForm">
+                            <div class="form-group">
+                                <label for="editID" class="control-label">Name:</label>
+                                <input type="text" class="form-control" id="editID" disabled>
+                            </div>
                             <div class="form-group">
                                 <label for="editName" class="control-label">Name:</label>
-                                <input type="text" class="form-control" id="editName" value="Main Hall">
+                                <input type="text" class="form-control" id="editName">
+                                <span id="createNameIcon" class="glyphicon glyphicon-remove form-control-feedback hidden" aria-hidden="true"></span>
                             </div>
                             <div class="form-group">
                                 <label for="editType" class="control-label">Type:</label>
@@ -206,8 +224,8 @@
                             <div id="availability" class="form-group">
                                 <label class="control-label">Availability:</label>
                                 <select class="form-control" id="editStatus">
-                                    <option value="available">Available</option>
-                                    <option value="unavailable">Unavailable</option>
+                                    <option value="Available">Available</option>
+                                    <option value="Unavailable">Unavailable</option>
                                 </select>
                             </div>
                             <div id="editStatusGroup" class="form-group">
@@ -222,7 +240,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-success">Save Resource</button>
+                        <button id="editRecord" type="button" class="btn btn-warning">Edit Resource</button>
                     </div>
                 </div>
             </div>

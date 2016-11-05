@@ -165,10 +165,10 @@ $(document).ready(function(){
                 title: "Status", 
                 data: "status",
                 createdCell: function(td, cellData, rowData, row, col) {
-                    if(cellData == "Available"){
+                    if(cellData.toLowerCase() == "available"){
                         $(td).css('background-color', "#dff0d8");
                     }
-                    else if(cellData == "Unavailable"){
+                    else if(cellData.toLowerCase() == "unavailable"){
                         $(td).css('background-color', "#f2dede");
                     }
                 }
@@ -188,31 +188,21 @@ $(document).ready(function(){
                 title: "Quick Edit", 
                 data: "id",
                 render: function(data){
-                            return "<div class='checkbox'><label><input type='checkbox' value='"+ data +"'>Quick Edit</label></div>";
+                            return "<div class='checkbox'><label><input class='quickEditCB' type='checkbox' value='"+ data +"'>Quick Edit</label></div>";
                 }  
             }
         ]        
     });
 
-    $("#createType").select2({ 
+    var createType = $("#createType").select2({ 
         data: getTypes(),
-        width: "100%"
+        width: "100%"    
     });
 
-     $("#createStatus").select2({ 
+     var createStatus = $("#createStatus").select2({ 
         width: "100%",
         minimumResultsForSearch: Infinity
      });
-
-    //  $("createType").select2({ 
-    //     width: "100%",
-    //     allowClear: true
-    //  });
-
-    //  $("#createStatus").select2({ 
-    //     width: "100%",
-    //     minimumResultsForSearch: Infinity
-    //  });
 
     var editType = $("#editType").select2({ 
         data: getTypes(),
@@ -239,11 +229,16 @@ $(document).ready(function(){
         } 
     }));
 
+    $("#quickEditStatus").click(function() {
+        // var quickEditRow = $(".quickEditCB");
+        // console.log(quickEditRow);
+    });
+
     $("#table").on("click", ".view",(function() {
         var row = table.row($(this).parents('tr')).data();
-
-        $("#viewName").attr("value", row.name);
-        $("#viewType").attr("value", row.type);
+        $("#viewID").val(row.id);
+        $("#viewName").val(row.name);
+        $("#viewType").val(row.type);
 
         if(row.status == "Available") {
             $("#available").show();
@@ -260,41 +255,83 @@ $(document).ready(function(){
         }
     }));
 
+    var editRow;
+
     $("#table").on("click", ".edit",(function() {
-        var row = table.row($(this).parents('tr')).data();
+        var row = table.row($(this).parents('tr'));
+        var rowData = row.data();
+        editRow = row;
+        $("#editID").val(rowData.id);
+        $("#editName").val(rowData.name);
+        editType.val(rowData.type).trigger("change");
 
-        $("#editName").attr("value", row.name);
-
-        editType.val(row.type).trigger("change");
-
-        if(row.status == "Available") {
-            editStatus.val("available").trigger("change");
-        } else {
-             editStatus.val("unavailable").trigger("change");
+        if(rowData.status.toLowerCase() == "available") {
+            editStatus.val("Available").trigger("change");
+        } else if(rowData.status.toLowerCase() == "unavailable") {
+             editStatus.val("Unavailable").trigger("change");
         }
 
-        if(row.type == "Conference Room") {
+        if(rowData.type == "Conference Room") {
             $("#editStatusGroup").show();
         } else {
             $("#editStatusGroup").hide();
         }
     }));
 
-    $('#createRecord').on('click', function () {
-        table.row.add({
-            "id": "0",
-            "name": $("#createName").val(),
-            "type": $("#createType").val(),
-            "status": $("#createStatus").val()
+    $('#createRecord').click(function() {
+        var name = $("#createName").val();
+        var type = $("#createType").val();
+        var status = $("#createStatus").val();
+        
+        if(name != null && name != "") {
+            //AJAX
+            table.row.add({
+                "id": "0",
+                "name": $("#createName").val(),
+                "type": $("#createType").val(),
+                "status": $("#createStatus").val()
             }).draw();
 
-        $("#createType").select2("val", "Computer");
-        $("#createStatus").select2("val", "Available");
-        $("#createName").val("");
-        $("#createModal").modal("hide");
-    } );
+            createType.val("Computer").trigger("change");
+            createStatus.val("Available").trigger("change");
+            $("#createName").val("");
+            $("#createName").parents(".form-group").removeClass("has-error has-feedback");
+            $("#createAlert").addClass("hidden");
+            $("#createNameIcon").addClass("hidden");
+            $("#createModal").modal("hide")
+        } else {
+            $("#createName").parents(".form-group").addClass("has-error has-feedback");
+            $("#createAlert").removeClass("hidden");
+            $("#createNameIcon").removeClass("hidden");
+        }
+    });
 
-    $(".multi-delete").click(function() {
+    $('#editRecord').click(function() {
+        var id = $("#editID").val();
+        var name = $("#editName").val();
+        var type = $("#editType").val();
+        var status = $("#editStatus").val();
+        
+        if(name != null && name != "") {
+            //AJAX
+            table.row(editRow).remove();
+            table.row.add({
+                "id": id,
+                "name": name,
+                "type": type,
+                "status": status
+            }).draw();
+
+            $("#editName").val("");
+            $("#editName").parents(".form-group").removeClass("has-error has-feedback");
+            $("#editAlert").addClass("hidden");
+            $("#editNameIcon").addClass("hidden");
+            $("#editModal").modal("hide")
+        } else {
+            $("#editName").parents(".form-group").addClass("has-error has-feedback");
+            $("#editAlert").removeClass("hidden");
+            $("#editNameIcon").removeClass("hidden");
+        }
     });
 });
 
