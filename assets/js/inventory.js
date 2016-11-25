@@ -191,7 +191,7 @@ $(document).ready(function(){
                             return "<div class='checkbox'><label><input class='quickEditCB' type='checkbox' value='"+ data +"'>Quick Edit</label></div>";
                 }  
             }
-        ]        
+        ]
     });
 
     var createType = $("#createType").select2({ 
@@ -284,7 +284,22 @@ $(document).ready(function(){
         var status = $("#createStatus").val();
         
         if(name != null && name != "") {
-            //AJAX
+            $.ajax({
+                url: '/inventory/'+id, // url where to submit the request
+                type : "POST", // type of action POST || GET
+                dataType : 'json', // data type
+                data : $("#createForm").serialize(), // post data || get data
+                success : function(result) {
+                    // you can see the result from the console
+                    // tab of the developer tools
+                    console.log(result);
+                },
+                error: function(xhr, resp, text) {
+                    console.log(xhr, resp, text);
+                    // TODO cancel update
+                }
+            });
+
             table.row.add({
                 "id": "0",
                 "name": $("#createName").val(),
@@ -313,7 +328,22 @@ $(document).ready(function(){
         var status = $("#editStatus").val();
         
         if(name != null && name != "") {
-            //AJAX
+            $.ajax({
+                url: '/inventory/'+id, 
+                type : "POST", 
+                dataType : 'json', 
+                data : $("#editForm").serialize(), 
+                success : function(result) {
+                    
+                    
+                    console.log(result);
+                },
+                error: function(xhr, resp, text) {
+                    console.log(xhr, resp, text);
+                    // TODO cancel update
+                }
+            });
+
             table.row(editRow).remove();
             table.row.add({
                 "id": id,
@@ -333,6 +363,62 @@ $(document).ready(function(){
             $("#editNameIcon").removeClass("hidden");
         }
     });
+
+    $('#deleteResources').click(function() {
+        // get all ids of checked items
+        var ids = new Array();
+
+        $(".quickEditCB:checked").each(function() { 
+            ids.push(this.value);
+
+            // TODO: move this into the success method
+            table.row($(this).parents('tr')).remove().draw();
+        });
+
+        $.ajax({
+            url: '/inventory/', 
+            type : "PATCH", 
+            dataType : 'json', 
+            data : ids, 
+            success : function(result) {
+                
+                // TODO: On success remove rows
+                console.log(result);
+            },
+            error: function(xhr, resp, text) {
+                console.log(xhr, resp, text);
+            }
+        });        
+    });   
+
+    $('#quickAvailable').click(function() {
+        // get all ids of checked items
+        var ids = new Array();
+
+        $(".quickEditCB:checked").each(function() { 
+            ids.push(this.value);
+            var row = table.row($(this).parents('tr'));
+            rowData = row.data();
+            rowData.status = "Available";
+            row.data(rowData);
+            table.row(row).draw();
+        });
+
+        $.ajax({
+            url: '/inventory/', 
+            type : "DELETE", 
+            dataType : 'json', 
+            data : ids, 
+            success : function(result) {
+                
+                // TODO: refresh results? or use javascript to update table?
+                console.log(result);
+            },
+            error: function(xhr, resp, text) {
+                console.log(xhr, resp, text);
+            }
+        });        
+    });        
 });
 
 function getInventoryItem(id) {
