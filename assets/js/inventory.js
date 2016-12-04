@@ -121,6 +121,23 @@ function getData() {
         "status": "Unavailable"
     }
 	];
+	$.ajax({
+            url: '/inventory', 
+            type : "GET", 
+            success : function(result) {
+				if (result.status) {
+					//make cookie
+				}
+                // TODO: redirect to resources
+                console.log(result);
+            },
+            error: function(xhr, resp, text) {
+				//need cookie
+                console.log(xhr, resp, text);
+                window.location.href = "Resources.html";
+                // TODO: flash prompt for pass again
+            }
+        })
 }
 
 function getTypes() {
@@ -249,9 +266,37 @@ $(document).ready(function(){
         }
 
         if(row.type == "Conference Room") {
-            $("#items").show();
+            $("#viewStatusGroup").show();
+			$("#viewRoomTypeGroup").show();
+			$("#viewRoomNumberGroup").show();
+			$("#viewCapacityGroup").show();
+			$("#viewHeightGroup").show();
+			$("#viewWidthGroup").show();
+			$("#viewLengthGroup").show();
         } else {
-            $("#items").hide();
+            $("#viewStatusGroup").hide();
+			$("#viewRoomTypeGroup").hide();
+			$("#viewRoomNumberGroup").hide();
+			$("#viewCapacityGroup").hide();
+			$("#viewHeightGroup").hide();
+			$("#viewWidthGroup").hide();
+			$("#viewLengthGroup").hide();
+        }
+		
+		if(row.type == "Whiteboard") {
+            $("#viewPrintableGroup").show();
+        } else {
+            $("#viewPrintableGroup").hide();
+        }
+		
+		if(row.type == "Computer") {
+            $("#viewRamGroup").show();
+			$("#viewStorageGroup").show();
+			$("#viewOperatingSystemGroup").show();
+        } else {
+            $("#viewRamGroup").hide();
+			$("#viewStorageGroup").hide();
+			$("#viewOperatingSystemGroup").hide();
         }
     }));
 
@@ -269,12 +314,6 @@ $(document).ready(function(){
             editStatus.val("Available").trigger("change");
         } else if(rowData.status.toLowerCase() == "unavailable") {
              editStatus.val("Unavailable").trigger("change");
-        }
-
-        if(rowData.type == "Conference Room") {
-            $("#editStatusGroup").show();
-        } else {
-            $("#editStatusGroup").hide();
         }
     }));
 
@@ -389,7 +428,11 @@ $(document).ready(function(){
                 console.log(xhr, resp, text);
             }
         });        
-    });   
+    });
+	
+	$('#createResource').click(function() {
+        $("#createType").trigger("change");       
+    });
 
     $('#quickAvailable').click(function() {
         // get all ids of checked items
@@ -418,7 +461,83 @@ $(document).ready(function(){
                 console.log(xhr, resp, text);
             }
         });        
-    });        
+    });
+	
+	$('#editType').on('change', function (e) {
+		var optionSelected = $("option:selected", this);
+		var valueSelected = this.value;
+		if(valueSelected == "Conference Room") {
+            $("#editStatusGroup").show();
+			$("#editRoomTypeGroup").show();
+			$("#editRoomNumberGroup").show();
+			$("#editCapacityGroup").show();
+			$("#editHeightGroup").show();
+			$("#editWidthGroup").show();
+			$("#editLengthGroup").show();
+        } else {
+            $("#editStatusGroup").hide();
+			$("#editRoomTypeGroup").hide();
+			$("#editRoomNumberGroup").hide();
+			$("#editCapacityGroup").hide();
+			$("#editHeightGroup").hide();
+			$("#editWidthGroup").hide();
+			$("#editLengthGroup").hide();
+        }
+		
+		if(valueSelected == "Whiteboard") {
+            $("#editPrintableGroup").show();
+        } else {
+            $("#editPrintableGroup").hide();
+        }
+		
+		if(valueSelected == "Computer") {
+            $("#editRamGroup").show();
+			$("#editStorageGroup").show();
+			$("#editOperatingSystemGroup").show();
+        } else {
+            $("#editRamGroup").hide();
+			$("#editStorageGroup").hide();
+			$("#editOperatingSystemGroup").hide();
+        }
+	});
+	
+	$('#createType').on('change', function (e) {
+		var optionSelected = $("option:selected", this);
+		var valueSelected = this.value;
+		if(valueSelected == "Conference Room") {
+            $("#createStatusGroup").show();
+			$("#createRoomTypeGroup").show();
+			$("#createRoomNumberGroup").show();
+			$("#createCapacityGroup").show();
+			$("#createHeightGroup").show();
+			$("#createWidthGroup").show();
+			$("#createLengthGroup").show();
+        } else {
+            $("#createStatusGroup").hide();
+			$("#createRoomTypeGroup").hide();
+			$("#createRoomNumberGroup").hide();
+			$("#createCapacityGroup").hide();
+			$("#createHeightGroup").hide();
+			$("#createWidthGroup").hide();
+			$("#createLengthGroup").hide();
+        }
+		
+		if(valueSelected == "Whiteboard") {
+            $("#createPrintableGroup").show();
+        } else {
+            $("#createPrintableGroup").hide();
+        }
+		
+		if(valueSelected == "Computer") {
+            $("#createRamGroup").show();
+			$("#createStorageGroup").show();
+			$("#createOperatingSystemGroup").show();
+        } else {
+            $("#createRamGroup").hide();
+			$("#createStorageGroup").hide();
+			$("#createOperatingSystemGroup").hide();
+        }
+	});
 });
 
 function getInventoryItem(id) {
