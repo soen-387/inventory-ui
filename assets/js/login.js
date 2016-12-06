@@ -2,24 +2,24 @@ $(document).ready(function(){
     $("#submit").on('click', function(){
 		var name = $("#email").val();
 		var pass = $("#password").val();
-		var data = { "username": name, "password": pass };
+		var data = { "user_id": name, "user_password": pass };
+		var test = JSON.stringify(data);
         $.ajax({
-            url: '/login', 
-            type : "POST", 
-            dataType : 'json', 
-            data : data, 
-            success : function(result) {
+            url: 'http://localhost:8080/login',
+			headers: {
+				'Content-Type':'application/json'
+			},
+			dataType: "json",
+            type : "POST",
+            data : test, 
+            success : function(result, status, xhr) {
 				if (result.status) {
-					//make cookie
+					document.cookie = xhr.getResponseHeader('Set-Cookie');
+					window.location.href = "http://localhost:8081/Resources.html";
 				}
-                // TODO: redirect to resources
-                console.log(result);
             },
             error: function(xhr, resp, text) {
-				//need cookie
                 console.log(xhr, resp, text);
-                window.location.href = "Resources.html";
-                // TODO: flash prompt for pass again
             }
         })
     });
